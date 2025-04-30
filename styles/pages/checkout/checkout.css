@@ -55,6 +55,8 @@
 
 .payment-summary {
   padding-bottom: 5px;
+  position: sticky;
+  top: calc(60px + 12px);
 }
 
 @media (max-width: 1000px) {
