@@ -8,6 +8,7 @@ if (cart && cart.length !== 0) {
   let totalCost = 0;
   let totalItems = 0;
   let cartDisplay = '';
+  const productsShippingDate = {};
 
   document.querySelectorAll('.delivery-option-input').forEach(input => {
     if (input.checked) {
@@ -26,17 +27,22 @@ if (cart && cart.length !== 0) {
     }
     let choosenDate;
     let deliveryOption = '';
+
     for (let option in shipping) {
       const isChecked = shipping[option].price === 0;
       if (isChecked) {
         choosenDate = shipping[option].date;
+        productsShippingDate[product.id] = {
+          month: shipping[option].date.monthName,
+          day: shipping[option].date.dayNum
+        };
       }
       deliveryOption += `
               <div class="delivery-option">
                 <input type="radio" ${isChecked ? 'checked' : ''} class="delivery-option-input" name="delivery-option-${product.id}" value="${JSON.stringify(shipping[option]).replace(/"/g, '&quot;')}" data-product-id="${product.id}">
                 <div>
                   <div class="delivery-option-date">
-                    ${shipping[option].date.dayName}, ${shipping[option].date.monthName} ${shipping[option].date.monthNum}
+                    ${shipping[option].date.dayName}, ${shipping[option].date.monthName} ${shipping[option].date.dayNum}
                   </div>
                   <div class="delivery-option-price">
                     ${shipping[option].price === 0 ? 'FREE Shipping' : '$' + shipping[option].price + ' - Shipping'}
@@ -45,10 +51,11 @@ if (cart && cart.length !== 0) {
               </div>
       `;
     }
+
     cartDisplay += `
         <div class="cart-item-container">
           <div class="delivery-date js-delivery-date" data-product-id="${product.id}">
-            Delivery date: ${choosenDate.dayName}, ${choosenDate.monthName} ${choosenDate.monthNum}
+            Delivery date: ${choosenDate.dayName}, ${choosenDate.monthName} ${choosenDate.dayNum}
           </div>
 
           <div class="cart-item-details-grid">
@@ -130,6 +137,7 @@ if (cart && cart.length !== 0) {
             document.querySelector('.js-return-to-home-link').innerHTML = cartQuantity + ' items';
             localStorage.setItem('cartQuantity', cartQuantity);
             localStorage.setItem('cart', JSON.stringify(cart));
+            delete productsShippingDate[link.dataset.productId];
             document.querySelector(`.js-product-price[data-product-id="${link.dataset.productId}"]`).innerHTML = 'Removed';
             document.querySelector(`.js-product-quantity[data-product-id="${link.dataset.productId}"]`).innerHTML = '';
             document.querySelector(`.js-delivery-options[data-product-id="${link.dataset.productId}"]`).innerHTML = '';
@@ -173,7 +181,7 @@ if (cart && cart.length !== 0) {
           <div class="payment-summary-money js-total-money">$52.51</div>
         </div>
 
-        <button class="place-order-button button-primary">
+        <button class="place-order-button js-place-order-button button-primary">
           Place your order
         </button>
   `;
@@ -205,16 +213,49 @@ if (cart && cart.length !== 0) {
 
       for (header of productDeliveryHeader) {
         if (header.dataset.productId === input.dataset.productId) {
-          header.innerHTML = `Delivery date: ${inputOBJ.date.dayName}, ${inputOBJ.date.monthName} ${inputOBJ.date.monthNum}`;
+          header.innerHTML = `Delivery date: ${inputOBJ.date.dayName}, ${inputOBJ.date.monthName} ${inputOBJ.date.dayNum}`;
           break;
         }
       }
 
       shippingPrices[input.dataset.productId] = inputOBJ.price;
-      totalShipping = Object.values(shippingPrices).reduce((sum, value) => sum + value, 0);
+      productsShippingDate[input.dataset.productId] = {
+        month: inputOBJ.date.monthName,
+        day: inputOBJ.date.dayNum
+      };
 
+      totalShipping = Object.values(shippingPrices).reduce((sum, value) => sum + value, 0);
       generatePayment();
     });
+  });
+
+  document.querySelector('.js-place-order-button').addEventListener('click', () => {
+    const order = {
+      id: crypto.getRandomValues(new Uint8Array(16)).reduce((id, byte) => id + byte.toString(16).padStart(2, '0'), ''),
+      date: {
+        day: today.getDate(),
+        month: monthNames[today.getMonth()]
+      },
+      price: (totalShipping + totalCost + tax).toFixed(2),
+      products: [...cart],
+      shippingDates: productsShippingDate
+    };
+
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.push(order);
+
+    localStorage.setItem('orders', JSON.stringify(orders));
+    localStorage.removeItem('cart');
+    localStorage.removeItem('cartQuantity');
+
+    document.querySelector('.js-payment-summary').insertAdjacentHTML('beforeend', '<p>Order placed <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg></p>');
+
+    document.querySelector('.js-place-order-button').style.pointerEvents = 'none';
+    document.querySelector('.js-place-order-button').style.opacity = '0.45';
+
+    setTimeout(() => {
+      window.location.href = './orders.html'
+    }, 1500);
   });
 }
 else {
