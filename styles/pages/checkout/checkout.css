@@ -57,6 +57,17 @@
   padding-bottom: 5px;
   position: sticky;
   top: calc(60px + 12px);
+  background-color: white;
+
+  p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 0.5em;
+    margin: 0.5em 0;
+    font-weight: bold;
+    color: rgb(26, 170, 0);
+  }
 }
 
 @media (max-width: 1000px) {
@@ -67,6 +78,7 @@
       the HTML. grid-row overrides this default ordering). */
     grid-row: 1;
     margin-bottom: 12px;
+    position: unset;
   }
 }
 
@@ -207,7 +219,7 @@
   padding-top: 12px;
   padding-bottom: 12px;
   border-radius: 8px;
-
+  transition-duration: 200ms;
   margin-top: 11px;
   margin-bottom: 15px;
 }
