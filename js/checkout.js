@@ -93,6 +93,41 @@ if (cart && cart.length !== 0) {
   });
   document.querySelector('.js-order-summary').innerHTML = cartDisplay;
 
+  document.querySelector('.js-payment-summary').innerHTML = `
+        <div class="payment-summary-title">
+          Order Summary
+        </div>
+
+        <div class="payment-summary-row">
+          <div class="js-items-count">Items (0):</div>
+          <div class="payment-summary-money js-total-items-cost">$0</div>
+        </div>
+
+        <div class="payment-summary-row">
+          <div>Shipping &amp; handling:</div>
+          <div class="payment-summary-money js-shipping-money">$0</div>
+        </div>
+
+        <div class="payment-summary-row subtotal-row">
+          <div>Total before tax:</div>
+          <div class="payment-summary-money js-total-before-tax">$0</div>
+        </div>
+
+        <div class="payment-summary-row">
+          <div>Estimated tax (10%):</div>
+          <div class="payment-summary-money js-estimated-tax">$4.77</div>
+        </div>
+
+        <div class="payment-summary-row total-row">
+          <div>Order total:</div>
+          <div class="payment-summary-money js-total-money">$52.51</div>
+        </div>
+
+        <button class="place-order-button js-place-order-button button-primary">
+          Place your order
+        </button>
+  `;
+
   document.querySelectorAll('.js-update-quantity-link').forEach(link => {
     link.addEventListener('click', () => {
       for (let cartItem of cart) {
@@ -141,6 +176,8 @@ if (cart && cart.length !== 0) {
             document.querySelector(`.js-product-price[data-product-id="${link.dataset.productId}"]`).innerHTML = 'Removed';
             document.querySelector(`.js-product-quantity[data-product-id="${link.dataset.productId}"]`).innerHTML = '';
             document.querySelector(`.js-delivery-options[data-product-id="${link.dataset.productId}"]`).innerHTML = '';
+            document.querySelector('.js-place-order-button').style.pointerEvents = 'none';
+            document.querySelector('.js-place-order-button').style.opacity = '0.45';
           }
           else if (cart.length === 0) {
             localStorage.removeItem('cart');
@@ -150,41 +187,6 @@ if (cart && cart.length !== 0) {
       }
     });
   });
-
-  document.querySelector('.js-payment-summary').innerHTML = `
-        <div class="payment-summary-title">
-          Order Summary
-        </div>
-
-        <div class="payment-summary-row">
-          <div class="js-items-count">Items (0):</div>
-          <div class="payment-summary-money js-total-items-cost">$0</div>
-        </div>
-
-        <div class="payment-summary-row">
-          <div>Shipping &amp; handling:</div>
-          <div class="payment-summary-money js-shipping-money">$0</div>
-        </div>
-
-        <div class="payment-summary-row subtotal-row">
-          <div>Total before tax:</div>
-          <div class="payment-summary-money js-total-before-tax">$0</div>
-        </div>
-
-        <div class="payment-summary-row">
-          <div>Estimated tax (10%):</div>
-          <div class="payment-summary-money js-estimated-tax">$4.77</div>
-        </div>
-
-        <div class="payment-summary-row total-row">
-          <div>Order total:</div>
-          <div class="payment-summary-money js-total-money">$52.51</div>
-        </div>
-
-        <button class="place-order-button js-place-order-button button-primary">
-          Place your order
-        </button>
-  `;
 
   let tax = totalCost * 10 / 100;
   function generatePayment() {
