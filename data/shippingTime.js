@@ -18,16 +18,16 @@ function getFutureDateInfo(baseDate, offsetDays) {
 }
 
 const shipping = {
-  after1Day: {
-    date: getFutureDateInfo(today, 1),
-    price: 9.99,
-  },
   after3Day: {
     date: getFutureDateInfo(today, 3),
+    price: 9.99,
+  },
+  after6Day: {
+    date: getFutureDateInfo(today, 6),
     price: 4.99
   },
-  after5Day: {
-    date: getFutureDateInfo(today, 5),
+  after10Day: {
+    date: getFutureDateInfo(today, 10),
     price: 0
   }
 };
