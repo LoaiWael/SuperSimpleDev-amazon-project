@@ -1,6 +1,6 @@
-const today = new Date();
-const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const monthNames = [
+export const today = new Date();
+export const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+export const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
@@ -17,7 +17,7 @@ function getFutureDateInfo(baseDate, offsetDays) {
   };
 }
 
-const shipping = {
+export const shipping = {
   after3Day: {
     date: getFutureDateInfo(today, 3),
     price: 9.99,

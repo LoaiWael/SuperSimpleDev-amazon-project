@@ -1,3 +1,5 @@
+import { products } from '../data/products.js';
+
 let productsGenerator = '';
 products.forEach(product => {
   productsGenerator += `
@@ -55,7 +57,9 @@ document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 document.querySelectorAll('.js-add-to-cart-button').forEach(button => {
+  let eventId;
   button.addEventListener('click', () => {
+    clearTimeout(eventId);
     const numOfItems = Number(document.querySelector(`select[data-product-id="${button.dataset.productId}"]`).value);
 
     if (cart.length == 0) {
@@ -90,7 +94,7 @@ document.querySelectorAll('.js-add-to-cart-button').forEach(button => {
 
     const addedMark = document.querySelector(`.js-added-to-cart[data-product-id="${button.dataset.productId}"]`);
     addedMark.style.opacity = 'unset'
-    setTimeout(() => {
+    eventId = setTimeout(() => {
       addedMark.style.opacity = '0'
     }, 2000);
   });

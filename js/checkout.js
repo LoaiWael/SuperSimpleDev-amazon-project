@@ -1,3 +1,6 @@
+import { today, dayNames, monthNames, shipping } from "../data/shippingTime.js";
+import { products } from "../data/products.js";
+
 const cart = JSON.parse(localStorage.getItem('cart')) || undefined;
 let cartQuantity = Number(localStorage.getItem('cartQuantity')) || 0;
 
@@ -213,7 +216,7 @@ if (cart && cart.length !== 0) {
 
       const productDeliveryHeader = document.querySelectorAll('.js-delivery-date');
 
-      for (header of productDeliveryHeader) {
+      for (let header of productDeliveryHeader) {
         if (header.dataset.productId === input.dataset.productId) {
           header.innerHTML = `Delivery date: ${inputOBJ.date.dayName}, ${inputOBJ.date.monthName} ${inputOBJ.date.dayNum}`;
           break;

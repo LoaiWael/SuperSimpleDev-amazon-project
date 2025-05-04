@@ -1,3 +1,5 @@
+import { products } from './../data/products.js';
+
 const orders = JSON.parse(localStorage.getItem('orders'));
 let cartQuantity = JSON.parse(localStorage.getItem('cartQuantity')) || 0;
 
