@@ -39,7 +39,7 @@ if (orders) {
               ${product.name}
             </div>
             <div class="product-delivery-date">
-              Arriving on: ${product.shippingDate.month} ${product.shippingDate.day}
+              Arriving on: ${product.shippingDate.month} ${product.shippingDate.dayNum}
             </div>
             <div class="product-quantity">
               Quantity: ${product.quantity}
@@ -65,7 +65,7 @@ if (orders) {
           <div class="order-header-left-section">
             <div class="order-date">
               <div class="order-header-label">Order Placed:</div>
-              <div>${order.date.month} ${order.date.day}</div>
+              <div>${order.date.month} ${order.date.dayNum}</div>
             </div>
             <div class="order-total">
               <div class="order-header-label">Total:</div>
@@ -115,4 +115,14 @@ if (orders) {
       }, 2300);
     });
   });
+
+  document.querySelectorAll('.track-package-button').forEach(button => {
+    button.addEventListener('click', () => {
+      localStorage.setItem('tracking', button.dataset.productObj);
+      window.location.href = './tracking.html';
+    });
+  });
+}
+else {
+  document.querySelector('.js-page-title').innerHTML = 'No orders yet.'
 }

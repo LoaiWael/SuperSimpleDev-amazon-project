@@ -37,7 +37,8 @@ if (cart && cart.length !== 0) {
         choosenDate = shipping[option].date;
         productsShippingDate[product.id] = {
           month: shipping[option].date.monthName,
-          day: shipping[option].date.dayNum
+          dayNum: shipping[option].date.dayNum,
+          dayName: shipping[option].date.dayName,
         };
       }
       deliveryOption += `
@@ -226,7 +227,8 @@ if (cart && cart.length !== 0) {
       shippingPrices[input.dataset.productId] = inputOBJ.price;
       productsShippingDate[input.dataset.productId] = {
         month: inputOBJ.date.monthName,
-        day: inputOBJ.date.dayNum
+        dayNum: inputOBJ.date.dayNum,
+        dayName: inputOBJ.date.dayName,
       };
 
       totalShipping = Object.values(shippingPrices).reduce((sum, value) => sum + value, 0);
@@ -238,7 +240,7 @@ if (cart && cart.length !== 0) {
     const order = {
       id: crypto.getRandomValues(new Uint8Array(16)).reduce((id, byte) => id + byte.toString(16).padStart(2, '0'), ''),
       date: {
-        day: today.getDate(),
+        dayNum: today.getDate(),
         month: monthNames[today.getMonth()]
       },
       price: (totalShipping + totalCost + tax).toFixed(2),
