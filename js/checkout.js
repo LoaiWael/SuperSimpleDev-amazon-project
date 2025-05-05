@@ -168,6 +168,10 @@ if (cart && cart.length !== 0) {
             break;
           }
           else if (cart.length !== 0 && cart[item].quantity === 1) {
+            if (cart.length === 1) {
+              document.querySelector('.js-place-order-button').style.pointerEvents = 'none';
+              document.querySelector('.js-place-order-button').style.opacity = '0.45';
+            }
             cart.splice(item, 1);
             totalItems--;
             totalCost -= Math.abs(Number(link.dataset.productPrice));
@@ -180,8 +184,6 @@ if (cart && cart.length !== 0) {
             document.querySelector(`.js-product-price[data-product-id="${link.dataset.productId}"]`).innerHTML = 'Removed';
             document.querySelector(`.js-product-quantity[data-product-id="${link.dataset.productId}"]`).innerHTML = '';
             document.querySelector(`.js-delivery-options[data-product-id="${link.dataset.productId}"]`).innerHTML = '';
-            document.querySelector('.js-place-order-button').style.pointerEvents = 'none';
-            document.querySelector('.js-place-order-button').style.opacity = '0.45';
           }
           else if (cart.length === 0) {
             localStorage.removeItem('cart');
