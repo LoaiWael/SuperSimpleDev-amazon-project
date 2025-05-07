@@ -1,8 +1,7 @@
 import { today, dayNames, monthNames, shipping } from "../data/shippingTime.js";
 import { products } from "../data/products.js";
-
-const cart = JSON.parse(localStorage.getItem('cart')) || undefined;
-let cartQuantity = Number(localStorage.getItem('cartQuantity')) || 0;
+import { cart, cartQuantity, addCartItem, removeCartItem } from '../data/cart.js';
+import { placeOrder } from "../data/orders.js";
 
 document.querySelector('.js-return-to-home-link').innerHTML = cartQuantity + ' items';
 
@@ -21,7 +20,7 @@ if (cart && cart.length !== 0) {
 
   cart.forEach(cartItem => {
     for (let i = 0; i < products.length; i++) {
-      if (products[i].id === cartItem.ID) {
+      if (products[i].id === cartItem.id) {
         product = products[i];
         totalCost += (product.priceCents / 100) * cartItem.quantity;
         totalItems += cartItem.quantity;
@@ -135,16 +134,13 @@ if (cart && cart.length !== 0) {
   document.querySelectorAll('.js-update-quantity-link').forEach(link => {
     link.addEventListener('click', () => {
       for (let cartItem of cart) {
-        if (link.dataset.productId === cartItem.ID) {
-          cartItem.quantity++;
+        if (link.dataset.productId === cartItem.id) {
           totalItems++;
           totalCost += Number(link.dataset.productPrice);
+          addCartItem(link.dataset.productId, 1);
           document.querySelector(`.js-quantity-label[data-product-id="${link.dataset.productId}"]`).innerHTML = cartItem.quantity;
-          generatePayment();
-          cartQuantity++;
           document.querySelector('.js-return-to-home-link').innerHTML = cartQuantity + ' items';
-          localStorage.setItem('cartQuantity', cartQuantity);
-          localStorage.setItem('cart', JSON.stringify(cart));
+          generatePayment();
           break;
         }
       }
@@ -154,43 +150,35 @@ if (cart && cart.length !== 0) {
   document.querySelectorAll('.js-delete-quantity-link').forEach(link => {
     link.addEventListener('click', () => {
       for (let item in cart) {
-        if (link.dataset.productId === cart[item].ID) {
+        if (link.dataset.productId === cart[item].id) {
           if (cart[item].quantity !== 1) {
-            cart[item].quantity--;
+            removeCartItem(link.dataset.productId, 1)
             totalItems--;
             totalCost -= Math.abs(Number(link.dataset.productPrice));
             document.querySelector(`.js-quantity-label[data-product-id="${link.dataset.productId}"]`).innerHTML = cart[item].quantity;
-            generatePayment();
-            cartQuantity--;
             document.querySelector('.js-return-to-home-link').innerHTML = cartQuantity + ' items';
-            localStorage.setItem('cartQuantity', cartQuantity);
-            localStorage.setItem('cart', JSON.stringify(cart));
-            break;
           }
           else if (cart.length !== 0 && cart[item].quantity === 1) {
             if (cart.length === 1) {
               document.querySelector('.js-place-order-button').style.pointerEvents = 'none';
               document.querySelector('.js-place-order-button').style.opacity = '0.45';
             }
-            cart.splice(item, 1);
+            removeCartItem(link.dataset.productId, 1);
             totalItems--;
             totalCost -= Math.abs(Number(link.dataset.productPrice));
-            generatePayment();
-            cartQuantity--;
             document.querySelector('.js-return-to-home-link').innerHTML = cartQuantity + ' items';
-            localStorage.setItem('cartQuantity', cartQuantity);
-            localStorage.setItem('cart', JSON.stringify(cart));
             delete productsShippingDate[link.dataset.productId];
             document.querySelector(`.js-product-price[data-product-id="${link.dataset.productId}"]`).innerHTML = 'Removed';
-            document.querySelector(`.js-product-quantity[data-product-id="${link.dataset.productId}"]`).innerHTML = '';
-            document.querySelector(`.js-delivery-options[data-product-id="${link.dataset.productId}"]`).innerHTML = '';
+            document.querySelector(`.js-product-quantity[data-product-id="${link.dataset.productId}"]`).remove();
+            document.querySelector(`.js-delivery-options[data-product-id="${link.dataset.productId}"]`).remove();
           }
           else if (cart.length === 0) {
-            localStorage.removeItem('cart');
-            localStorage.removeItem('cartQuantity');
+            removeCartItem(link.dataset.productId, 1);
           }
+          break;
         }
       }
+      generatePayment();
     });
   });
 
@@ -232,30 +220,17 @@ if (cart && cart.length !== 0) {
         dayNum: inputOBJ.date.dayNum,
         dayName: inputOBJ.date.dayName,
       };
-
       totalShipping = Object.values(shippingPrices).reduce((sum, value) => sum + value, 0);
       generatePayment();
     });
   });
 
   document.querySelector('.js-place-order-button').addEventListener('click', () => {
-    const order = {
-      id: crypto.getRandomValues(new Uint8Array(16)).reduce((id, byte) => id + byte.toString(16).padStart(2, '0'), ''),
-      date: {
-        dayNum: today.getDate(),
-        month: monthNames[today.getMonth()]
-      },
-      price: (totalShipping + totalCost + tax).toFixed(2),
-      products: [...cart],
-      shippingDates: productsShippingDate
-    };
 
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    orders.push(order);
-
-    localStorage.setItem('orders', JSON.stringify(orders));
-    localStorage.removeItem('cart');
-    localStorage.removeItem('cartQuantity');
+    placeOrder({
+      dayNum: today.getDate(),
+      month: monthNames[today.getMonth()]
+    }, (totalShipping + totalCost + tax).toFixed(2), [...cart], productsShippingDate);
 
     document.querySelector('.js-payment-summary').insertAdjacentHTML('beforeend', '<p>Order placed <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg></p>');
 

@@ -1,4 +1,5 @@
 import { products } from '../data/products.js';
+import { cart, cartQuantity, addCartItem } from '../data/cart.js';
 
 let productsGenerator = '';
 products.forEach(product => {
@@ -52,9 +53,7 @@ products.forEach(product => {
 `;
 });
 document.querySelector('.js-products-grid').innerHTML = productsGenerator;
-let cartQuantity = JSON.parse(localStorage.getItem('cartQuantity')) || 0;
 document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 document.querySelectorAll('.js-add-to-cart-button').forEach(button => {
   let eventId;
@@ -62,35 +61,9 @@ document.querySelectorAll('.js-add-to-cart-button').forEach(button => {
     clearTimeout(eventId);
     const numOfItems = Number(document.querySelector(`select[data-product-id="${button.dataset.productId}"]`).value);
 
-    if (cart.length == 0) {
-      cart.push({
-        ID: button.dataset.productId,
-        quantity: numOfItems
-      });
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-    else {
-      for (let i = 0; i < cart.length; i++) {
-        if (cart[i].ID === button.dataset.productId) {
-          cart[i].quantity += numOfItems;
-          localStorage.setItem('cart', JSON.stringify(cart));
-          break;
-        }
-        else if (i === cart.length - 1 && cart[i].ID !== button.dataset.productId) {
-          cart.push({
-            ID: button.dataset.productId,
-            quantity: numOfItems
-          });
-          localStorage.setItem('cart', JSON.stringify(cart));
-          break;
-        }
-      };
-    }
-    cartQuantity += numOfItems;
-    localStorage.setItem('cartQuantity', cartQuantity);
+    addCartItem(button.dataset.productId, numOfItems);
+
     document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
-
-
 
     const addedMark = document.querySelector(`.js-added-to-cart[data-product-id="${button.dataset.productId}"]`);
     addedMark.style.opacity = 'unset'

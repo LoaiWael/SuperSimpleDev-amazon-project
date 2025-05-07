@@ -1,7 +1,6 @@
 import { products } from './../data/products.js';
-
-const orders = JSON.parse(localStorage.getItem('orders'));
-let cartQuantity = JSON.parse(localStorage.getItem('cartQuantity')) || 0;
+import { orders } from '../data/orders.js';
+import { cartQuantity, cart, addCartItem } from '../data/cart.js';
 
 document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
 
@@ -14,7 +13,7 @@ if (orders) {
 
       for (let j = 0; j < products.length; j++) {
 
-        if (products[j].id === order.products[i].ID) {
+        if (products[j].id === order.products[i].id) {
 
           orderdProducts.push({
             id: products[j].id,
@@ -65,7 +64,7 @@ if (orders) {
           <div class="order-header-left-section">
             <div class="order-date">
               <div class="order-header-label">Order Placed:</div>
-              <div>${order.date.month} ${order.date.dayNum}</div>
+              <div>${order.orderDate.month} ${order.orderDate.dayNum}</div>
             </div>
             <div class="order-total">
               <div class="order-header-label">Total:</div>
@@ -86,26 +85,9 @@ if (orders) {
       `);
   });
 
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
   document.querySelectorAll('.js-buy-again-button').forEach(button => {
     button.addEventListener('click', () => {
-      let found = false;
-      for (let i = 0; i < cart.length; i++) {
-        if (cart[i].ID === button.dataset.productId) {
-          found = true;
-          cart[i].quantity++;
-          break;
-        }
-      }
-      if (!found) {
-        cart.push({
-          ID: button.dataset.productId,
-          quantity: 1
-        });
-      }
-      cartQuantity++;
-      localStorage.setItem('cart', JSON.stringify(cart));
-      localStorage.setItem('cartQuantity', cartQuantity);
+      addCartItem(button.dataset.productId, 1);
 
       document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
       const lastInner = button.innerHTML;

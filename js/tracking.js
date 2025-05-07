@@ -1,10 +1,10 @@
 import { today } from './../data/shippingTime.js';
+import { cartQuantity } from '../data/cart.js';
 
-const cartQuantity = JSON.parse(localStorage.getItem('cartQuantity')) || 0;
 document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
 
 const trackingProduct = JSON.parse(localStorage.getItem('tracking'));
-console.log(trackingProduct);
+
 document.querySelector('.js-delivery-date').innerHTML = ` Arriving on ${trackingProduct.shippingDate.dayName}, ${trackingProduct.shippingDate.month} ${trackingProduct.shippingDate.dayNum}`;
 document.querySelector('.js-product-info-name').innerHTML = trackingProduct.name;
 document.querySelector('.js-product-info-quantity').innerHTML = `Quantity: ${trackingProduct.quantity}`;
