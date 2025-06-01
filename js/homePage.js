@@ -1,5 +1,5 @@
 import { products } from '../data/products.js';
-import { cart, cartQuantity, addCartItem } from '../data/cart.js';
+import cart from '../data/cart.js';
 
 let productsGenerator = '';
 products.forEach(product => {
@@ -53,7 +53,7 @@ products.forEach(product => {
 `;
 });
 document.querySelector('.js-products-grid').innerHTML = productsGenerator;
-document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+document.querySelector('.js-cart-quantity').innerHTML = cart.getCartQuantity();
 
 document.querySelectorAll('.js-add-to-cart-button').forEach(button => {
   let eventId;
@@ -61,9 +61,9 @@ document.querySelectorAll('.js-add-to-cart-button').forEach(button => {
     clearTimeout(eventId);
     const numOfItems = Number(document.querySelector(`select[data-product-id="${button.dataset.productId}"]`).value);
 
-    addCartItem(button.dataset.productId, numOfItems);
+    cart.addCartItem(button.dataset.productId, numOfItems);
 
-    document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+    document.querySelector('.js-cart-quantity').innerHTML = cart.getCartQuantity();
 
     const addedMark = document.querySelector(`.js-added-to-cart[data-product-id="${button.dataset.productId}"]`);
     addedMark.style.opacity = 'unset'
