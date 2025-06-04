@@ -1,4 +1,20 @@
-export const products = [
+class Product {
+  id;
+  image;
+  name;
+  rating;
+  priceCents;
+
+  constructor(item) {
+    this.id = item.id;
+    this.image = item.image;
+    this.name = item.name;
+    this.rating = item.rating;
+    this.priceCents = item.priceCents;
+  }
+}
+
+const products = [
   {
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
     image: "images/products/athletic-cotton-socks-6-pairs.jpg",
@@ -657,4 +673,6 @@ export const products = [
       "mens"
     ]
   }
-];
+].map(item => new Product(item));
+
+window.products = products;

@@ -1,11 +1,11 @@
-import { today, dayNames, monthNames, shipping } from "../data/shippingTime.js";
-import { products } from "../data/products.js";
-import { cart, cartQuantity, addCartItem, removeCartItem } from '../data/cart.js';
-import { placeOrder } from "../data/orders.js";
+import { shippingDateOBJ, shippingOptions } from "../data/shippingTime.js";
+import "../data/products.js";
+import { cartOBJ } from '../data/cart.js';
+import { Order } from "../data/orders.js";
 
-document.querySelector('.js-return-to-home-link').innerHTML = cartQuantity + ' items';
+document.querySelector('.js-return-to-home-link').innerHTML = cartOBJ.getCartQuantity() + ' items';
 
-if (cart && cart.length !== 0) {
+if (cartOBJ.cart && cartOBJ.cart.length !== 0) {
   let product;
   let totalCost = 0;
   let totalItems = 0;
@@ -18,7 +18,7 @@ if (cart && cart.length !== 0) {
     }
   });
 
-  cart.forEach(cartItem => {
+  cartOBJ.cart.forEach(cartItem => {
     for (let i = 0; i < products.length; i++) {
       if (products[i].id === cartItem.id) {
         product = products[i];
@@ -30,25 +30,25 @@ if (cart && cart.length !== 0) {
     let choosenDate;
     let deliveryOption = '';
 
-    for (let option in shipping) {
-      const isChecked = shipping[option].price === 0;
+    for (let option in shippingOptions) {
+      const isChecked = shippingOptions[option].price === 0;
       if (isChecked) {
-        choosenDate = shipping[option].date;
+        choosenDate = shippingOptions[option].date;
         productsShippingDate[product.id] = {
-          month: shipping[option].date.monthName,
-          dayNum: shipping[option].date.dayNum,
-          dayName: shipping[option].date.dayName,
+          month: shippingOptions[option].date.monthName,
+          dayNum: shippingOptions[option].date.dayNum,
+          dayName: shippingOptions[option].date.dayName,
         };
       }
       deliveryOption += `
               <div class="delivery-option">
-                <input type="radio" ${isChecked ? 'checked' : ''} class="delivery-option-input" name="delivery-option-${product.id}" value="${JSON.stringify(shipping[option]).replace(/"/g, '&quot;')}" data-product-id="${product.id}">
+                <input type="radio" ${isChecked ? 'checked' : ''} class="delivery-option-input" name="delivery-option-${product.id}" value="${JSON.stringify(shippingOptions[option]).replace(/"/g, '&quot;')}" data-product-id="${product.id}">
                 <div>
                   <div class="delivery-option-date">
-                    ${shipping[option].date.dayName}, ${shipping[option].date.monthName} ${shipping[option].date.dayNum}
+                    ${shippingOptions[option].date.dayName}, ${shippingOptions[option].date.monthName} ${shippingOptions[option].date.dayNum}
                   </div>
                   <div class="delivery-option-price">
-                    ${shipping[option].price === 0 ? 'FREE Shipping' : '$' + shipping[option].price + ' - Shipping'}
+                    ${shippingOptions[option].price === 0 ? 'FREE Shipping' : '$' + shippingOptions[option].price + ' - Shipping'}
                   </div>
                 </div>
               </div>
@@ -133,13 +133,13 @@ if (cart && cart.length !== 0) {
 
   document.querySelectorAll('.js-update-quantity-link').forEach(link => {
     link.addEventListener('click', () => {
-      for (let cartItem of cart) {
+      for (let cartItem of cartOBJ.cart) {
         if (link.dataset.productId === cartItem.id) {
           totalItems++;
           totalCost += Number(link.dataset.productPrice);
-          addCartItem(link.dataset.productId, 1);
+          cartOBJ.addCartItem(link.dataset.productId, 1);
           document.querySelector(`.js-quantity-label[data-product-id="${link.dataset.productId}"]`).innerHTML = cartItem.quantity;
-          document.querySelector('.js-return-to-home-link').innerHTML = cartQuantity + ' items';
+          document.querySelector('.js-return-to-home-link').innerHTML = cartOBJ.getCartQuantity() + ' items';
           generatePayment();
           break;
         }
@@ -149,31 +149,31 @@ if (cart && cart.length !== 0) {
 
   document.querySelectorAll('.js-delete-quantity-link').forEach(link => {
     link.addEventListener('click', () => {
-      for (let item in cart) {
-        if (link.dataset.productId === cart[item].id) {
-          if (cart[item].quantity !== 1) {
-            removeCartItem(link.dataset.productId, 1)
+      for (let item in cartOBJ.cart) {
+        if (link.dataset.productId === cartOBJ.cart[item].id) {
+          if (cartOBJ.cart[item].quantity !== 1) {
+            cartOBJ.removeCartItem(link.dataset.productId, 1)
             totalItems--;
             totalCost -= Math.abs(Number(link.dataset.productPrice));
-            document.querySelector(`.js-quantity-label[data-product-id="${link.dataset.productId}"]`).innerHTML = cart[item].quantity;
-            document.querySelector('.js-return-to-home-link').innerHTML = cartQuantity + ' items';
+            document.querySelector(`.js-quantity-label[data-product-id="${link.dataset.productId}"]`).innerHTML = cartOBJ.cart[item].quantity;
+            document.querySelector('.js-return-to-home-link').innerHTML = cartOBJ.getCartQuantity() + ' items';
           }
-          else if (cart.length !== 0 && cart[item].quantity === 1) {
-            if (cart.length === 1) {
+          else if (cartOBJ.cart.length !== 0 && cartOBJ.cart[item].quantity === 1) {
+            if (cartOBJ.cart.length === 1) {
               document.querySelector('.js-place-order-button').style.pointerEvents = 'none';
               document.querySelector('.js-place-order-button').style.opacity = '0.45';
             }
-            removeCartItem(link.dataset.productId, 1);
+            cartOBJ.removeCartItem(link.dataset.productId, 1);
             totalItems--;
             totalCost -= Math.abs(Number(link.dataset.productPrice));
-            document.querySelector('.js-return-to-home-link').innerHTML = cartQuantity + ' items';
+            document.querySelector('.js-return-to-home-link').innerHTML = cartOBJ.getCartQuantity() + ' items';
             delete productsShippingDate[link.dataset.productId];
             document.querySelector(`.js-product-price[data-product-id="${link.dataset.productId}"]`).innerHTML = 'Removed';
             document.querySelector(`.js-product-quantity[data-product-id="${link.dataset.productId}"]`).remove();
             document.querySelector(`.js-delivery-options[data-product-id="${link.dataset.productId}"]`).remove();
           }
           else if (cart.length === 0) {
-            removeCartItem(link.dataset.productId, 1);
+            cartOBJ.removeCartItem(link.dataset.productId, 1);
           }
           break;
         }
@@ -227,10 +227,10 @@ if (cart && cart.length !== 0) {
 
   document.querySelector('.js-place-order-button').addEventListener('click', () => {
 
-    placeOrder({
-      dayNum: today.getDate(),
-      month: monthNames[today.getMonth()]
-    }, (totalShipping + totalCost + tax).toFixed(2), [...cart], productsShippingDate);
+    const order = new Order({
+      dayNum: shippingDateOBJ.getToday().getDate(),
+      month: shippingDateOBJ.getMonthNames()[shippingDateOBJ.getToday().getMonth()]
+    }, (totalShipping + totalCost + tax).toFixed(2), [...cartOBJ.cart], productsShippingDate);
 
     document.querySelector('.js-payment-summary').insertAdjacentHTML('beforeend', '<p>Order placed <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg></p>');
 

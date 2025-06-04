@@ -1,11 +1,13 @@
 class Cart {
   #cartKey;
+  cart;
+  #cartQuantity;
+
   constructor(cartKey) {
     this.#cartKey = cartKey;
+    this.cart = JSON.parse(localStorage.getItem(this.#cartKey)) || [];
+    this.#cartQuantity = JSON.parse(localStorage.getItem(`${this.#cartKey}-cartQuantity`)) || 0;
   }
-
-  cart = JSON.parse(localStorage.getItem(this.#cartKey)) || [];
-  #cartQuantity = JSON.parse(localStorage.getItem(`${this.#cartKey}-cartQuantity`)) || 0;
 
   getCartQuantity() {
     return this.#cartQuantity;
@@ -61,6 +63,11 @@ class Cart {
       }
     }
   }
+
+  deleteCart() {
+    localStorage.removeItem(this.#cartKey);
+    localStorage.removeItem(`${this.#cartKey}-cartQuantity`);
+  }
 }
 
-export default new Cart('cart');
+export const cartOBJ = new Cart('cart');

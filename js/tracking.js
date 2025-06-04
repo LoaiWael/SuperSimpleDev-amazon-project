@@ -1,7 +1,6 @@
-import { today } from './../data/shippingTime.js';
-import { cartQuantity } from '../data/cart.js';
+import { cartOBJ } from '../data/cart.js';
 
-document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+document.querySelector('.js-cart-quantity').innerHTML = cartOBJ.getCartQuantity();
 
 const trackingProduct = JSON.parse(localStorage.getItem('tracking'));
 
@@ -9,6 +8,8 @@ document.querySelector('.js-delivery-date').innerHTML = ` Arriving on ${tracking
 document.querySelector('.js-product-info-name').innerHTML = trackingProduct.name;
 document.querySelector('.js-product-info-quantity').innerHTML = `Quantity: ${trackingProduct.quantity}`;
 document.querySelector('.js-product-image').src = trackingProduct.image;
+
+const today = new Date();
 
 const deliverPercentage = (today.getDate() / trackingProduct.shippingDate.dayNum) * 100;
 document.querySelector('.js-progress-bar').style.width = `${deliverPercentage}%`;

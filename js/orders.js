@@ -1,8 +1,8 @@
-import { products } from './../data/products.js';
-import { orders } from '../data/orders.js';
-import { cartQuantity, cart, addCartItem } from '../data/cart.js';
+import './../data/products.js';
+import { Order, orders } from '../data/orders.js';
+import { cartOBJ } from '../data/cart.js';
 
-document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+document.querySelector('.js-cart-quantity').innerHTML = cartOBJ.getCartQuantity();
 
 if (orders) {
 
