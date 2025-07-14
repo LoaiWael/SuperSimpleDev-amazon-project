@@ -1,9 +1,10 @@
-import '../data/products.js'
+import { products, loadProducts } from "../data/products.js";
 import { cartOBJ } from '../data/cart.js';
 
-let productsGenerator = '';
-products.forEach(product => {
-  productsGenerator += `
+loadProducts(() => {
+  let productsGenerator = '';
+  products.forEach(product => {
+    productsGenerator += `
         <div class="product-container">
         <div class="product-image-container">
           <img class="product-image" src="${product.image}">
@@ -51,24 +52,25 @@ products.forEach(product => {
         </button>
       </div>
 `;
-});
-document.querySelector('.js-products-grid').innerHTML = productsGenerator;
-document.querySelector('.js-cart-quantity').innerHTML = cartOBJ.getCartQuantity();
+  });
+  document.querySelector('.js-products-grid').innerHTML = productsGenerator;
+  document.querySelector('.js-cart-quantity').innerHTML = cartOBJ.getCartQuantity();
 
-document.querySelectorAll('.js-add-to-cart-button').forEach(button => {
-  let eventId;
-  button.addEventListener('click', () => {
-    clearTimeout(eventId);
-    const numOfItems = Number(document.querySelector(`select[data-product-id="${button.dataset.productId}"]`).value);
+  document.querySelectorAll('.js-add-to-cart-button').forEach(button => {
+    let eventId;
+    button.addEventListener('click', () => {
+      clearTimeout(eventId);
+      const numOfItems = Number(document.querySelector(`select[data-product-id="${button.dataset.productId}"]`).value);
 
-    cartOBJ.addCartItem(button.dataset.productId, numOfItems);
+      cartOBJ.addCartItem(button.dataset.productId, numOfItems);
 
-    document.querySelector('.js-cart-quantity').innerHTML = cartOBJ.getCartQuantity();
+      document.querySelector('.js-cart-quantity').innerHTML = cartOBJ.getCartQuantity();
 
-    const addedMark = document.querySelector(`.js-added-to-cart[data-product-id="${button.dataset.productId}"]`);
-    addedMark.style.opacity = 'unset'
-    eventId = setTimeout(() => {
-      addedMark.style.opacity = '0'
-    }, 2000);
+      const addedMark = document.querySelector(`.js-added-to-cart[data-product-id="${button.dataset.productId}"]`);
+      addedMark.style.opacity = 'unset'
+      eventId = setTimeout(() => {
+        addedMark.style.opacity = '0'
+      }, 2000);
+    });
   });
 });
