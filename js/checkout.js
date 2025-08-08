@@ -5,7 +5,8 @@ import { Order } from "../data/orders.js";
 
 document.querySelector('.js-return-to-home-link').innerHTML = cartOBJ.getCartQuantity() + ' items';
 
-loadProducts(() => {
+loadProducts().then(products => {
+
   if (cartOBJ.cart && cartOBJ.cart.length !== 0) {
     let product;
     let totalCost = 0;

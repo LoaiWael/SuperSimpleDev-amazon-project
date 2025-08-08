@@ -1,7 +1,7 @@
 import { products, loadProducts } from "../data/products.js";
 import { cartOBJ } from '../data/cart.js';
 
-loadProducts(() => {
+loadProducts().then(products => {
   let productsGenerator = '';
   products.forEach(product => {
     productsGenerator += `

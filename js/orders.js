@@ -3,7 +3,8 @@ import { Order, orders } from '../data/orders.js';
 import { cartOBJ } from '../data/cart.js';
 
 document.querySelector('.js-cart-quantity').innerHTML = cartOBJ.getCartQuantity();
-loadProducts(() => {
+
+loadProducts().then(products => {
   if (orders) {
 
     orders.forEach(order => {

@@ -15,14 +15,17 @@ class Product {
 }
 
 export let products = [];
-export function loadProducts(afterLoad) {
-  const xhr = new XMLHttpRequest();
-  xhr.addEventListener('load', () => {
-    products = JSON.parse(xhr.response).map(item => new Product(item));
-    afterLoad();
-  });
-  xhr.open('GET', 'https://supersimplebackend.dev/products');
-  xhr.send();
+export function loadProducts() {
+  // const xhr = new XMLHttpRequest();
+  // xhr.addEventListener('load', () => {
+  //   products = JSON.parse(xhr.response).map(item => new Product(item));
+  //   afterLoad();
+  // });
+  // xhr.open('GET', 'https://supersimplebackend.dev/products');
+  // xhr.send();
+  return fetch('https://supersimplebackend.dev/products').then(response => {
+    return response.json();
+  })
 }
 
 // const products = [
