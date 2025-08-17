@@ -2,8 +2,6 @@ import { cartOBJ } from '../data/cart.js';
 
 document.querySelector('.js-cart-quantity').innerHTML = cartOBJ.getCartQuantity();
 
-const trackingProduct = JSON.parse(localStorage.getItem('tracking'));
-
 document.querySelector('.js-delivery-date').innerHTML = ` Arriving on ${trackingProduct.shippingDate.dayName}, ${trackingProduct.shippingDate.month} ${trackingProduct.shippingDate.dayNum}`;
 document.querySelector('.js-product-info-name').innerHTML = trackingProduct.name;
 document.querySelector('.js-product-info-quantity').innerHTML = `Quantity: ${trackingProduct.quantity}`;

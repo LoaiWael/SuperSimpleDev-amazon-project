@@ -1,5 +1,5 @@
 import { products, loadProducts } from "../data/products.js";
-import { Order, orders } from '../data/orders.js';
+import { orders } from '../data/orders.js';
 import { cartOBJ } from '../data/cart.js';
 
 document.querySelector('.js-cart-quantity').innerHTML = cartOBJ.getCartQuantity();
@@ -51,7 +51,7 @@ loadProducts().then(products => {
           </div>
 
           <div class="product-actions">
-              <button class="track-package-button button-secondary" data-product-obj="${JSON.stringify(product).replace(/"/g, '&quot;')}">
+              <button class="track-package-button track-package-button-js button-secondary" data-order-id="${order.id}" data-product-id="${product.id}">
                 Track package
               </button>
           </div>
@@ -99,10 +99,12 @@ loadProducts().then(products => {
       });
     });
 
-    document.querySelectorAll('.track-package-button').forEach(button => {
+    document.querySelectorAll('.track-package-button-js').forEach(button => {
       button.addEventListener('click', () => {
-        localStorage.setItem('tracking', button.dataset.productObj);
-        window.location.href = './tracking.html';
+
+        const product = orders.find(order => order.id === button.dataset.orderId).products.find(product => product.id === button.dataset.productId);
+
+        window.location.href = `./tracking.html?product=${JSON.stringify(product)}&arrivalDate=${JSON.stringify(orders.find(order => order.id === button.dataset.orderId).shippingDates[product.id])}`;
       });
     });
   }

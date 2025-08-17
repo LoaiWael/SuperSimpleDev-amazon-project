@@ -23,9 +23,9 @@ export function loadProducts() {
   // });
   // xhr.open('GET', 'https://supersimplebackend.dev/products');
   // xhr.send();
-  return fetch('https://supersimplebackend.dev/products').then(response => {
-    return response.json();
-  })
+  return fetch('https://supersimplebackend.dev/products').then(response => response.json()).catch(error => {
+    console.log('unexcpecetd error occured.');
+  });
 }
 
 // const products = [
